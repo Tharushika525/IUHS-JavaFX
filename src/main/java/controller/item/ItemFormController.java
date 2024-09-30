@@ -1,4 +1,4 @@
-package controller;
+package controller.item;
 
 import com.jfoenix.controls.JFXTextField;
 import db.DBConnection;
@@ -12,6 +12,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Item;
+import util.CrudUtil;
 
 import java.net.URL;
 import java.sql.*;
@@ -64,14 +65,13 @@ public class ItemFormController implements Initializable {
 
         String SQL = "INSERT INTO item VALUES(?,?,?,?,?)";
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            PreparedStatement pS = connection.prepareStatement(SQL);
-            pS.setObject(1,item.getItemCode());
-            pS.setObject(2,item.getDescription());
-            pS.setObject(3,item.getSize());
-            pS.setObject(4,item.getPrice());
-            pS.setObject(5,item.getQty());
-            boolean isAdded = pS.executeUpdate() > 0;
+            boolean isAdded = CrudUtil.execute(
+                    SQL,
+                    item.getItemCode(),
+                    item.getDescription(),
+                    item.getSize(),
+                    item.getPrice(),
+                    item.getQty());
             if(isAdded){
                 new Alert(Alert.AlertType.INFORMATION,"Item Added Successfully!!").show();
                 loadTable();
@@ -84,11 +84,10 @@ public class ItemFormController implements Initializable {
 
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
-           String SQL = "DELETE FROM item WHERE ItemCode='"+txtItemCode.getText()+"'";
+           String SQL = "DELETE FROM item WHERE ItemCode=?";
 
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            boolean isDeleted = connection.createStatement().executeUpdate(SQL) > 0;
+            boolean isDeleted = CrudUtil.execute(SQL,txtItemCode.getText());
             if(isDeleted){
                 new Alert(Alert.AlertType.INFORMATION,"Item Deleted!!").show();
                 loadTable();
@@ -104,10 +103,7 @@ public class ItemFormController implements Initializable {
         String SQL = "SELECT * FROM item WHERE ItemCode=?";
 
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            PreparedStatement pS = connection.prepareStatement(SQL);
-            pS.setObject(1,txtItemCode.getText());
-            ResultSet resultSet = pS.executeQuery();
+            ResultSet resultSet = CrudUtil.execute(SQL,txtItemCode.getText());
             resultSet.next();
             setValue(new Item(
                     resultSet.getString(1),
@@ -135,14 +131,13 @@ public class ItemFormController implements Initializable {
 
           String SQL = "UPDATE item SET Description=?,PackSize=?,UnitPrice=?,QtyOnHand=? WHERE ItemCode=?";
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            PreparedStatement pS = connection.prepareStatement(SQL);
-            pS.setObject(1,item.getDescription());
-            pS.setObject(2,item.getSize());
-            pS.setObject(3,item.getPrice());
-            pS.setObject(4,item.getQty());
-            pS.setObject(5,item.getItemCode());
-            boolean isUpdated = pS.executeUpdate()>0;
+            boolean isUpdated = CrudUtil.execute(
+                    SQL,
+                    item.getDescription(),
+                    item.getSize(),
+                    item.getPrice(),
+                    item.getQty(),
+                    item.getItemCode());
             if(isUpdated){
                 new Alert(Alert.AlertType.INFORMATION,"Item Updated!!").show();
                 loadTable();
@@ -165,9 +160,8 @@ public class ItemFormController implements Initializable {
         colQty.setCellValueFactory(new PropertyValueFactory<>("qty"));
 
         try {
-            String SQL = "Select * from item";
-            Connection connection = DBConnection.getInstance().getConnection();
-            ResultSet resultSet = connection.createStatement().executeQuery(SQL);
+            String SQL = "select * from item";
+            ResultSet resultSet = CrudUtil.execute(SQL);
             while(resultSet.next()){
                 Item item = new Item(
                         resultSet.getString("ItemCode"),
