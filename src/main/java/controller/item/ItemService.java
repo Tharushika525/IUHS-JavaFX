@@ -1,5 +1,6 @@
 package controller.item;
 
+import javafx.collections.ObservableList;
 import model.Customer;
 import model.Item;
 
@@ -8,4 +9,5 @@ public interface ItemService {
     boolean updateItem(Item item);
     Item searchItem(String itemCode);
     boolean deleteItem(String itemCode);
+    ObservableList<Item> getAllItem();
 }

@@ -53,6 +53,7 @@ public class ItemFormController implements Initializable {
     @FXML
     private JFXTextField txtQty;
 
+    ItemService itemController = new ItemController();
     @FXML
     void btnAddOnAction(ActionEvent event) {
         Item item = new Item(
@@ -62,22 +63,12 @@ public class ItemFormController implements Initializable {
                 Double.parseDouble(txtPrice.getText()),
                 Integer.parseInt(txtQty.getText())
         );
-
-        String SQL = "INSERT INTO item VALUES(?,?,?,?,?)";
-        try {
-            boolean isAdded = CrudUtil.execute(
-                    SQL,
-                    item.getItemCode(),
-                    item.getDescription(),
-                    item.getSize(),
-                    item.getPrice(),
-                    item.getQty());
+            boolean isAdded = itemController.addItem(item);
             if(isAdded){
                 new Alert(Alert.AlertType.INFORMATION,"Item Added Successfully!!").show();
                 loadTable();
                 clearText();
-            }
-        } catch (SQLException e) {
+        } else {
             new Alert(Alert.AlertType.ERROR,"Item Not Added!!").show();
         }
     }
@@ -149,41 +140,19 @@ public class ItemFormController implements Initializable {
         }
 
     }
-
     public void loadTable(){
-        ObservableList<Item> itemObservableList = FXCollections.observableArrayList();
+        ObservableList<Item> items = itemController.getAllItem();
+        tblItem.setItems(items);
+    }
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         colItemCode.setCellValueFactory(new PropertyValueFactory<>("itemCode"));
         colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
         colPackSize.setCellValueFactory(new PropertyValueFactory<>("size"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
         colQty.setCellValueFactory(new PropertyValueFactory<>("qty"));
 
-        try {
-            String SQL = "select * from item";
-            ResultSet resultSet = CrudUtil.execute(SQL);
-            while(resultSet.next()){
-                Item item = new Item(
-                        resultSet.getString("ItemCode"),
-                        resultSet.getString("Description"),
-                        resultSet.getString("PackSize"),
-                        resultSet.getDouble("UnitPrice"),
-                        resultSet.getInt("QtyOnHand")
-
-                );
-                itemObservableList.add(item);
-
-            }
-            tblItem.setItems(itemObservableList);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
         loadTable();
 
         tblItem.getSelectionModel().selectedItemProperty().addListener((observableValue, Item, itemValues) ->{
