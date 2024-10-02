@@ -75,39 +75,19 @@ public class ItemFormController implements Initializable {
 
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
-           String SQL = "DELETE FROM item WHERE ItemCode=?";
-
-        try {
-            boolean isDeleted = CrudUtil.execute(SQL,txtItemCode.getText());
-            if(isDeleted){
-                new Alert(Alert.AlertType.INFORMATION,"Item Deleted!!").show();
-                loadTable();
-                clearText();
-            }
-        } catch (SQLException e) {
-           new Alert(Alert.AlertType.ERROR,"Item Not Deleted!!").show();
-        }
+        if(itemController.deleteItem(txtItemCode.getText())){
+            new Alert(Alert.AlertType.INFORMATION,"Item Deleted!!").show();
+            loadTable();
+            clearText();
+    } else {
+        new Alert(Alert.AlertType.ERROR,"Item Not Deleted!!").show();
+    }
     }
 
     @FXML
     void btnSearchOnAction(ActionEvent event) {
-        String SQL = "SELECT * FROM item WHERE ItemCode=?";
-
-        try {
-            ResultSet resultSet = CrudUtil.execute(SQL,txtItemCode.getText());
-            resultSet.next();
-            setValue(new Item(
-                    resultSet.getString(1),
-                    resultSet.getString(2),
-                    resultSet.getString(3),
-                    resultSet.getDouble(4),
-                    resultSet.getInt(5)
-            ));
-
-        } catch (SQLException e) {
-           new Alert(Alert.AlertType.ERROR,"Item Not Found!!").show();
-        }
-
+        Item item = itemController.searchItem(txtItemCode.getText());
+        setValue(item);
     }
 
     @FXML
@@ -119,27 +99,15 @@ public class ItemFormController implements Initializable {
                 Double.parseDouble(txtPrice.getText()),
                 Integer.parseInt(txtQty.getText())
         );
-
-          String SQL = "UPDATE item SET Description=?,PackSize=?,UnitPrice=?,QtyOnHand=? WHERE ItemCode=?";
-        try {
-            boolean isUpdated = CrudUtil.execute(
-                    SQL,
-                    item.getDescription(),
-                    item.getSize(),
-                    item.getPrice(),
-                    item.getQty(),
-                    item.getItemCode());
-            if(isUpdated){
-                new Alert(Alert.AlertType.INFORMATION,"Item Updated!!").show();
-                loadTable();
-                clearText();
-
-            }
-        } catch (SQLException e) {
-           new Alert(Alert.AlertType.ERROR,"Item Not Updated!!").show();
-        }
-
+        if(itemController.updateItem(item)){
+            new Alert(Alert.AlertType.INFORMATION,"Item Updated!!").show();
+            loadTable();
+            clearText();
+    } else{
+        new Alert(Alert.AlertType.ERROR,"Item Not Updated!!").show();
     }
+    }
+
     public void loadTable(){
         ObservableList<Item> items = itemController.getAllItem();
         tblItem.setItems(items);
