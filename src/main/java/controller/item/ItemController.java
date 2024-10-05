@@ -3,6 +3,7 @@ package controller.item;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
+import model.Customer;
 import model.Item;
 import util.CrudUtil;
 
@@ -93,5 +94,14 @@ public class ItemController implements ItemService{
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+    public  ObservableList<String> getItemCodes(){
+        ObservableList<Item> allItems = getAllItem();
+        ObservableList<String> itemCodeList = FXCollections.observableArrayList();
+
+        allItems.forEach(item -> {
+            itemCodeList.add(item.getItemCode());
+        });
+        return itemCodeList;
     }
 }

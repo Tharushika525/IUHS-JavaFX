@@ -116,4 +116,13 @@ public class CustomerController implements CustomerService{
             throw new RuntimeException(e);
         }
     }
+    public  ObservableList<String> getCustomerIds(){
+        ObservableList<Customer> allCustomers = getAllCustomer();
+        ObservableList<String> idList = FXCollections.observableArrayList();
+
+        allCustomers.forEach(customer -> {
+            idList.add(customer.getId());
+        });
+        return idList;
+    }
 }
