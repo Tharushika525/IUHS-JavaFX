@@ -2,17 +2,15 @@ package controller.item;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Alert;
-import model.Customer;
-import model.Item;
-import model.OrderDatail;
+import dto.Item;
+import dto.OrderDatail;
 import util.CrudUtil;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class ItemController implements ItemService{
+public class ItemController implements ItemService1 {
     @Override
     public boolean addItem(Item item) {
         String SQL = "INSERT INTO item VALUES(?,?,?,?,?)";
@@ -31,18 +29,19 @@ public class ItemController implements ItemService{
 
     @Override
     public boolean updateItem(Item item) {
-        String SQL = "UPDATE item SET Description=?,PackSize=?,UnitPrice=?,QtyOnHand=? WHERE ItemCode=?";
-        try {
-            return CrudUtil.execute(
-                    SQL,
-                    item.getDescription(),
-                    item.getSize(),
-                    item.getPrice(),
-                    item.getQty(),
-                    item.getItemCode());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+//        String SQL = "UPDATE item SET Description=?,PackSize=?,UnitPrice=?,QtyOnHand=? WHERE ItemCode=?";
+//        try {
+//            return CrudUtil.execute(
+//                    SQL,
+//                    item.getDescription(),
+//                    item.getSize(),
+//                    item.getPrice(),
+//                    item.getQty(),
+//                    item.getItemCode());
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+        return false;
 
     }
 
@@ -73,6 +72,7 @@ public class ItemController implements ItemService{
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     @Override

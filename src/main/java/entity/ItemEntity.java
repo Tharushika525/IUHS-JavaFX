@@ -1,4 +1,4 @@
-package model;
+package entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 
-public class Item {
+public class ItemEntity {
     private String itemCode;
     private String description;
     private String size;

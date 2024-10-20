@@ -1,7 +1,7 @@
 package service.custom;
 
 import javafx.collections.ObservableList;
-import model.Customer;
+import dto.Customer;
 import service.SuperService;
 
 public interface CustomerService extends SuperService {

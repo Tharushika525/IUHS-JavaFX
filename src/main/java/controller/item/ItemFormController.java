@@ -1,8 +1,6 @@
 package controller.item;
 
 import com.jfoenix.controls.JFXTextField;
-import db.DBConnection;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,11 +9,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import model.Item;
-import util.CrudUtil;
+import dto.Item;
+import service.ServiceFactory;
+import service.custom.ItemService;
+import service.custom.impl.ItemServiceImpl;
+import util.ServiceType;
 
 import java.net.URL;
-import java.sql.*;
 import java.util.ResourceBundle;
 
 public class ItemFormController implements Initializable {
@@ -53,7 +53,7 @@ public class ItemFormController implements Initializable {
     @FXML
     private JFXTextField txtQty;
 
-    ItemService itemController = new ItemController();
+    ItemService  itemService = ServiceFactory.getInstance().getServiceType(ServiceType.ITEM);
     @FXML
     void btnAddOnAction(ActionEvent event) {
         Item item = new Item(
@@ -63,8 +63,9 @@ public class ItemFormController implements Initializable {
                 Double.parseDouble(txtPrice.getText()),
                 Integer.parseInt(txtQty.getText())
         );
-            boolean isAdded = itemController.addItem(item);
-            if(isAdded){
+
+
+        if(itemService.addItem(item)){
                 new Alert(Alert.AlertType.INFORMATION,"Item Added Successfully!!").show();
                 loadTable();
                 clearText();
@@ -75,7 +76,7 @@ public class ItemFormController implements Initializable {
 
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
-        if(itemController.deleteItem(txtItemCode.getText())){
+        if(itemService.deleteItem(txtItemCode.getText())){
             new Alert(Alert.AlertType.INFORMATION,"Item Deleted!!").show();
             loadTable();
             clearText();
@@ -86,7 +87,7 @@ public class ItemFormController implements Initializable {
 
     @FXML
     void btnSearchOnAction(ActionEvent event) {
-        Item item = itemController.searchItem(txtItemCode.getText());
+        Item item = itemService.searchItem(txtItemCode.getText());
         setValue(item);
     }
 
@@ -99,7 +100,7 @@ public class ItemFormController implements Initializable {
                 Double.parseDouble(txtPrice.getText()),
                 Integer.parseInt(txtQty.getText())
         );
-        if(itemController.updateItem(item)){
+        if(itemService.updateItem(item)){
             new Alert(Alert.AlertType.INFORMATION,"Item Updated!!").show();
             loadTable();
             clearText();
@@ -109,7 +110,7 @@ public class ItemFormController implements Initializable {
     }
 
     public void loadTable(){
-        ObservableList<Item> items = itemController.getAllItem();
+        ObservableList<Item> items = itemService.getAllItem();
         tblItem.setItems(items);
     }
 

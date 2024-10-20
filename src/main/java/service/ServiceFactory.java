@@ -10,7 +10,7 @@ public class ServiceFactory {
     private ServiceFactory(){
     }
 
-    public static ServiceFactory getFactory(){
+    public static ServiceFactory getInstance(){
         return factory!=null? factory:(factory = new ServiceFactory());
     }
 

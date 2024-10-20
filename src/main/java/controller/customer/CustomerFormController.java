@@ -16,12 +16,14 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import model.Customer;
-import util.CrudUtil;
+import dto.Customer;
+import repository.custom.impl.CustomerDaoImpl;
+import service.ServiceFactory;
+import service.custom.CustomerService;
+import util.ServiceType;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.*;
 import java.util.ResourceBundle;
 
 public class CustomerFormController implements Initializable {
@@ -86,7 +88,8 @@ public class CustomerFormController implements Initializable {
     @FXML
     private JFXTextField txtSalary;
 
-    CustomerService customerController = new CustomerController();
+
+    CustomerService service = ServiceFactory.getInstance().getServiceType(ServiceType.CUSTOMER);
     @FXML
     void btnAddOnAction(ActionEvent event) {
         Customer customer = new Customer(
@@ -100,18 +103,21 @@ public class CustomerFormController implements Initializable {
                 txtProvince.getText(),
                 txtPostalCode.getText()
         );
-        if(customerController.addCustomer(customer)){
-            new Alert(Alert.AlertType.INFORMATION,"Customer Added Successfully").show();
-            loadTable();
-    } else {
-        new Alert(Alert.AlertType.ERROR,"Customer Not Added").show();
-    }
+
+//        CustomerService service = ServiceFactory.getInstance().getServiceType(ServiceType.CUSTOMER);
+
+       if(service.addCustomer(customer)){
+           new Alert(Alert.AlertType.INFORMATION,"Customer Added!!").show();
+           loadTable();
+       }else{
+           new Alert(Alert.AlertType.ERROR,"Customer Not Added!!").show();
+       }
     }
 
 
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
-        if(customerController.deleteCustomer(txtCustomerID.getText())){
+        if(service.deleteCustomer(txtCustomerID.getText())){
             new Alert(Alert.AlertType.INFORMATION,"Deleted Successfully!!").show();
             loadTable();
     } else {
@@ -126,7 +132,7 @@ public class CustomerFormController implements Initializable {
 
     @FXML
     void btnSearchOnAction(ActionEvent event)  {
-       setValueToText(customerController.searchCustomer(txtCustomerID.getText()));
+       setValueToText(service.searchCustomer(txtCustomerID.getText()));
 
     }
 
@@ -144,7 +150,7 @@ public class CustomerFormController implements Initializable {
                 txtPostalCode.getText()
 
         );
-        if(customerController.updateCustomer(customer)){
+        if(service.updateCustomer(customer)){
             new Alert(Alert.AlertType.INFORMATION,"Update Successfully!!").show();
             loadTable();
 
@@ -163,7 +169,7 @@ public class CustomerFormController implements Initializable {
     }
 
     public void loadTable(){
-        ObservableList<Customer> customers = customerController.getAllCustomer();
+        ObservableList<Customer> customers = service.getAllCustomer();
         tblCustomers.setItems(customers);
 
     }

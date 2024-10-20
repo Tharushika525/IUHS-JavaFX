@@ -1,6 +1,6 @@
 package controller.order;
 
-import model.OrderDatail;
+import dto.OrderDatail;
 import util.CrudUtil;
 
 import java.sql.SQLException;

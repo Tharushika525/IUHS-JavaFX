@@ -2,12 +2,10 @@ package controller.order;
 
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
-import controller.customer.CustomerController;
 import controller.item.ItemController;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,7 +17,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Duration;
-import model.*;
+import dto.*;
+import repository.custom.CustomerDao;
+import repository.custom.impl.CustomerDaoImpl;
+import repository.custom.impl.ItemDaoImpl;
+import service.custom.impl.CustomerServiceImpl;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -170,10 +172,10 @@ public class PlaceOrderFormController implements Initializable {
     }
 
     private void loadCustomerIds(){
-       cmbCustomerId.setItems(new CustomerController().getCustomerIds());
+       cmbCustomerId.setItems(new CustomerDaoImpl().getIds());
     }
     private void loadItemCodes(){
-        cmbItemCode.setItems(new ItemController().getItemCodes());
+        cmbItemCode.setItems(new ItemDaoImpl().getIds());
     }
     public  void loadItemData(String itemCode){
         Item item = new ItemController().searchItem(itemCode);
@@ -184,7 +186,7 @@ public class PlaceOrderFormController implements Initializable {
     }
 
     public  void loadCustomerData(String customerID){
-        Customer customer = new CustomerController().searchCustomer(customerID);
+        Customer customer = new CustomerServiceImpl().searchCustomer(customerID);
 
        txtName.setText(customer.getName());
        txtCity.setText(customer.getCity());
